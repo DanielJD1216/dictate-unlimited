@@ -1,0 +1,64 @@
+# Validation and known limits
+
+The local Apple-Silicon/macOS build passed core checks, numerical checks, session
+checks and packaged inference tests. Full XCTest has not run on the Command Line
+Tools-only test host. Use full Xcode for `swift test`.
+
+```sh
+./scripts/check-local.sh
+./scripts/check-session.sh
+./scripts/check-model-store.sh
+./scripts/check-correction-store.sh
+./scripts/check-clipboard.sh
+```
+
+Session checks compile the production session controller against deterministic
+boundary doubles. They verify restored selections, missing/corrupt model failure,
+interruption and suppression of late results. They do not simulate physical hardware.
+
+## Observed coverage
+
+- All three models downloaded through the app into isolated storage and passed
+  declared size/hash checks. The clean-built app then transcribed the synthetic
+  fixture from those new downloads with networking denied. Base Repair restored a
+  deliberately corrupted artifact. Cancel/retry also passed in the real UI.
+- All three accepted five-minute input and rejected input over the limit.
+- Base and Plus exactly matched a 738-word repeated fixture. Pro inserted three
+  extra words. This fixture is not a general recognition-accuracy benchmark.
+- A real five-minute microphone recording stopped automatically; cancellation during
+  transcription discarded the result. This live limit/cancellation check used base.
+- Automatic selected-model restoration was observed with Pro. Deterministic checks
+  cover all three selections, including missing/corrupt installations.
+- The tester confirmed physical shortcut insertion in TextEdit, an untitled editor
+  and a browser address bar, plus recovery after sleep/wake and microphone loss.
+  Editor/browser identities and physical interruption timing were not recorded.
+
+## Limits to disclose
+
+Every-app insertion compatibility, varied
+hardware/accents/noise, and a fresh second Mac are unverified. Download/Repair validation is described in PREVIEW-RELEASE.md.
+ModelStore checks use synthetic HTTPS responses, including cancellation, connection
+loss, bad size/hash and preservation of existing models after failed repair. First Core ML specialization can take
+minutes. Native compilation/prediction cannot always stop immediately after Cancel.
+Pro may print an upstream Core ML shape diagnostic before successful CLI inference.
+The development app is ad-hoc signed; rebuilding can require permission refresh.
+
+Audio and session text are not saved as history. Local test logs, screenshots and
+investigation material are excluded from the source-preview export. Test results
+are evidence for this bounded build, not public-release acceptance.
+
+
+## Local workflow additions
+
+New deterministic coverage includes Unicode dictionary boundaries, longest-match
+and non-cascading replacement, dictionary disk persistence/undo/corrupt-file
+preservation, shortcut validation and duplicate-event suppression, hold release
+before permission completes, unavailable input, and fresh-target paste-last recovery.
+Live UI checks cover correction editing/removal/undo, shortcut recording and duplicate
+rejection, and explicit microphone selection/testing. The five-second test returned
+Ready while a menu remained open, validating its common-run-loop timer. Physical hold mode, dictionary corrections and paste-last recovery were confirmed
+by the tester. Text delivery was also confirmed in a chat composer. A stale
+Accessibility entry after an ad-hoc rebuild was reproduced and resolved by removing
+and re-adding the current app; the tester confirmed delivery afterward. Closing and
+reopening Settings was tested after adding the application reopen handler. These
+checks do not imply every keyboard layout, application or microphone was tested.
