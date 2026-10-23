@@ -85,8 +85,12 @@ final class AudioCapture: @unchecked Sendable {
         let input = engine.inputNode
         if var deviceID {
             guard let unit=input.audioUnit else { throw AppError("Microphone input unit is unavailable.") }
-            let status=AudioUnitSetProperty(unit,kAudioOutputUnitProperty_CurrentDevice,kAudioUnitScope_Global,0,&deviceID,UInt32(MemoryLayout<UInt32>.size))
-            guard status==noErr else { throw AppError("Cannot use the selected microphone (\(status)). Refresh inputs and try again.") }
+            var current:UInt32=0;var size=UInt32(MemoryLayout<UInt32>.size)
+            let read=AudioUnitGetProperty(unit,kAudioOutputUnitProperty_CurrentDevice,kAudioUnitScope_Global,0,&current,&size)
+            if read != noErr || current != deviceID {
+                let status=AudioUnitSetProperty(unit,kAudioOutputUnitProperty_CurrentDevice,kAudioUnitScope_Global,0,&deviceID,UInt32(MemoryLayout<UInt32>.size))
+                guard status==noErr else { throw AppError("Cannot use the selected microphone (\(status)). Refresh inputs and try again.") }
+            }
         }
         try checkGeneration(token)
         let source = input.outputFormat(forBus: 0)
@@ -124,9 +128,13 @@ final class AudioCapture: @unchecked Sendable {
             try checkGeneration(token)
             configurationObserver = NotificationCenter.default.addObserver(forName:.AVAudioEngineConfigurationChange,object:engine,queue:nil) { [weak self] _ in
                 guard let self else { return }
-                Task { @MainActor [weak self] in
-                    guard let self, self.isAccepting(activeGeneration) else { return }
-                    self.onInterruption?()
+                self.engineQueue.async { [weak self] in
+                    guard let self, self.engineGeneration == activeGeneration,
+                          let engine=self.engine, !engine.isRunning else { return }
+                    Task { @MainActor [weak self] in
+                        guard let self, self.isAccepting(activeGeneration) else { return }
+                        self.onInterruption?()
+                    }
                 }
             }
         }

@@ -91,3 +91,11 @@ its audio worker. Shared audio services are never restarted by the app.
 `./scripts/check-audio-startup.sh` injects delayed native preparation and checks
 bounded completion, overlap rejection, cancellation and no late capture. These
 checks do not reproduce every hardware-driver failure.
+
+The repaired packaged app completed nine live capture cycles across Wireless
+Microphone Rx and MacBook Pro Microphone: automatic microphone-test stops, an early
+stop, repeated dictation cancellation, and a recording that completed transcription
+with no speech detected. No UI freeze was observed in those cycles. A follow-up fix
+ignores configuration notifications while the engine is still running and avoids
+redundant input-device writes. This bounded check does not guarantee all audio drivers
+or every future device transition.
