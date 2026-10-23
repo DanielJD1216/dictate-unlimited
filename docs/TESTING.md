@@ -79,3 +79,15 @@ Import store checks cover copied-file hashes, persistence, corruption, symlinks,
 unexpected executable files, missing components, cancellation and URL directory
 metadata differences. Runtime checks confirm corrupt tokenizers fail locally with
 no fallback. Physical bilingual dictation/insertion on this build remains pending.
+
+Microphone-startup follow-up: a user-reported freeze was sampled inside
+AVAudioEngine input-device setup on the main actor, not Whisper inference. Engine
+setup/teardown now run on a dedicated serial queue; a ten-second native-start timeout
+returns an actionable error without waiting for the native call. Cancellation
+invalidates the generation, and late completion cannot accept samples. A stalled
+native call cannot be forcibly unwound; the app may still need restarting to reset
+its audio worker. Shared audio services are never restarted by the app.
+
+`./scripts/check-audio-startup.sh` injects delayed native preparation and checks
+bounded completion, overlap rejection, cancellation and no late capture. These
+checks do not reproduce every hardware-driver failure.

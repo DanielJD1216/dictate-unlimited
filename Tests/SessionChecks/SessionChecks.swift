@@ -14,7 +14,7 @@ struct AppError: LocalizedError { let text: String; init(_ text: String) { self.
 @MainActor final class AudioCapture {
     static var starts = 0
     var onInterruption: (() -> Void)?
-    func start(deviceID: UInt32? = nil, monitoring: Bool = false) throws { Self.starts += 1 }
+    func start(deviceID: UInt32? = nil, monitoring: Bool = false) async throws { Self.starts += 1 }
     func snapshot() -> (count: Int, level: Float) { (16000, 0) }
     func stop() throws -> [Float] { [0, 0] }
     func cancel() {}

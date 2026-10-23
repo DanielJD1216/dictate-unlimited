@@ -98,7 +98,8 @@ import DictateCore
             if Task.isCancelled { target=nil;holdActive=false;phase = .idle;work=nil;stateChanged?();return }
             guard allowed else { target=nil;holdActive=false;phase = .idle;message="Microphone access is required. Enable Dictate Unlimited in System Settings → Privacy & Security → Microphone.";work=nil;stateChanged?();return }
             do {
-                try capture.start(deviceID:try resolveInput(), monitoring:test)
+                try await capture.start(deviceID:try resolveInput(), monitoring:test)
+                try Task.checkCancellation()
                 watchdog=CaptureWatchdog(now:ProcessInfo.processInfo.systemUptime)
                 if !test { transcript="" }
                 seconds=0;phase=test ? .testingMicrophone : .recording
@@ -114,7 +115,7 @@ import DictateCore
                 }
                 if let timer { RunLoop.main.add(timer,forMode:.common) }
                 stateChanged?()
-            } catch { target=nil;holdActive=false;phase = .idle;message=error.localizedDescription;stateChanged?() }
+            } catch { capture.cancel();target=nil;holdActive=false;phase = .idle;message=error is CancellationError ? "Microphone preparation cancelled." : error.localizedDescription;stateChanged?() }
             work=nil
         }
     }
