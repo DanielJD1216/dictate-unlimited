@@ -24,7 +24,8 @@ import AVFoundation
                         try f.read(into: b)
                         guard let p = b.floatChannelData?[0] else { throw AppError("Expected floating audio") }
                         let samples = Array(UnsafeBufferPointer(start: p, count: Int(b.frameLength)))
-                        print(try await engine.transcribe(samples))
+                        let selectedLanguage=ProcessInfo.processInfo.environment["DICTATE_TRANSCRIPTION_LANGUAGE"]
+                        print(try await engine.transcribe(samples,language:selectedLanguage == "auto" ? nil : selectedLanguage))
                     }
                     exit(0)
                 } catch { fputs("\(error.localizedDescription)\n",stderr); exit(1) }

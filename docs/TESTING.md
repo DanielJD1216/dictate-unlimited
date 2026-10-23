@@ -62,3 +62,20 @@ Accessibility entry after an ad-hoc rebuild was reproduced and resolved by remov
 and re-adding the current app; the tester confirmed delivery afterward. Closing and
 reopening Settings was tested after adding the application reopen handler. These
 checks do not imply every keyboard layout, application or microphone was tested.
+
+## V1.1 local development checks
+
+Whisper small and compressed Turbo were exercised with networking denied using
+installed macOS Samantha/Yuna synthetic voices, separately in English/Korean and
+with auto detection. Both returned English correctly aside from punctuation.
+Turbo matched the Korean fixture exactly; small misrecognized a Korean word and
+spacing. In one concatenated English/Korean fixture, Turbo retained both languages
+(with “Mac” in Latin letters) while small omitted the English portion. This is a
+small synthetic smoke test, not a multilingual accuracy benchmark or human acceptance.
+Both returned empty output for digital silence. Bark models still completed local
+English inference; base heard “Mac” as “map”, and Pro emitted its known shape warning.
+
+Import store checks cover copied-file hashes, persistence, corruption, symlinks,
+unexpected executable files, missing components, cancellation and URL directory
+metadata differences. Runtime checks confirm corrupt tokenizers fail locally with
+no fallback. Physical bilingual dictation/insertion on this build remains pending.

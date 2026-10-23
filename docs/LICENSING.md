@@ -10,6 +10,8 @@ it does not replace third-party licences. No model weights are redistributed.
 | Optional Bark weights | Three immutable revisions in Sources/DictateCore/Resources/models.json | CC BY 4.0; packaged family notices and runtime attribution; Pro also downloads LICENSE/NOTICE |
 | FluidAudio | a00964e1aa8eff99c4bce80bc9c8ff2d4dd1568d | Apache-2.0; Resources/Notices/FluidAudio-LICENSE.txt |
 | FluidAudio third-party implementations | Notices from the same pinned checkout | Resources/Notices/FluidAudio-ThirdParty; includes fastcluster BSD-2-Clause and VBx Apache-2.0 |
+| WhisperKit / ArgmaxCore | 1bbc57cb7fe6410248a685b1c5a3c6d56adc2ed4 | MIT and retained third-party notices, Resources/Notices/WhisperKit-* |
+| Whisper models/tokenizers | Pinned Whisper catalog | MIT, OpenAI/Argmax; no weights redistributed |
 | ZIPFoundation | 0.9.19, revision 02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0 | MIT; Resources/Notices/ZIPFoundation-LICENSE.txt |
 
 Retain notices and adaptation credits in source and binary distributions. The app

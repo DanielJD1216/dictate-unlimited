@@ -6,13 +6,16 @@ import DictateCore
 
 actor Recognition {
     private var small: SmallBarkRecognizer?
+    private var whisper: WhisperRecognition?
     private var pro: [String: AsrManager] = [:]
     private var selectedID: String?
-    func unload() { small = nil; pro = [:]; selectedID = nil }
+    func unload() { small = nil; whisper = nil; pro = [:]; selectedID = nil }
     func prepare(_ model: BarkModel, root: URL) async throws {
         if selectedID == model.id { return }
         unload()
-        if model.id == "bark-pro" {
+        if model.id.hasPrefix("whisper-") {
+            whisper = try await WhisperRecognition(root: root)
+        } else if model.id == "bark-pro" {
             let cache = root.appendingPathComponent("Compiled", isDirectory: true)
             try FileManager.default.createDirectory(at: cache, withIntermediateDirectories: true)
             var compiled: [String: URL] = [:]
@@ -37,8 +40,9 @@ actor Recognition {
         } else { small = try SmallBarkRecognizer(root: root) }
         selectedID = model.id
     }
-    func transcribe(_ samples: [Float]) async throws -> String {
+    func transcribe(_ samples: [Float], language: String? = nil) async throws -> String {
         guard AudioLimits.valid(samples) else { throw AppError("Recording is empty, invalid or longer than five minutes.") }
+        if let whisper { return try await whisper.transcribe(samples, language: language) }
         if let small { return try await small.transcribe(samples) }
         if let manager = pro["full15"] {
             var state = try TdtDecoderState()

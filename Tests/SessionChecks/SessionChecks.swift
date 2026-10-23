@@ -21,7 +21,7 @@ struct AppError: LocalizedError { let text: String; init(_ text: String) { self.
 }
 actor Recognition {
     func prepare(_ model: BarkModel, root: URL) async throws { try? await Task.sleep(nanoseconds: 40_000_000) }
-    func transcribe(_ samples: [Float]) async throws -> String {
+    func transcribe(_ samples: [Float], language: String? = nil) async throws -> String {
         // Deliberately ignores cancellation to simulate a noninterruptible native call.
         try? await Task.sleep(nanoseconds: 100_000_000)
         return "late result"
@@ -43,6 +43,17 @@ actor Recognition {
     }
     @MainActor static func main() async {
         let defaults = UserDefaults.standard
+        let savedLanguage=defaults.object(forKey:"transcriptionLanguage")
+        defer { if let savedLanguage { defaults.set(savedLanguage,forKey:"transcriptionLanguage") } else { defaults.removeObject(forKey:"transcriptionLanguage") } }
+        let languageSession=DictationSession()
+        languageSession.loadedID="whisper-small";languageSession.language="ko"
+        precondition(languageSession.supportsLanguageSelection && languageSession.recognitionLanguage == "ko")
+        languageSession.language="auto";precondition(languageSession.recognitionLanguage == nil)
+        languageSession.loadedID="bark";languageSession.language="ko"
+        precondition(!languageSession.supportsLanguageSelection && languageSession.recognitionLanguage == "en")
+        defaults.set("invalid",forKey:"transcriptionLanguage")
+        precondition(DictationSession().language == "auto")
+        print("PASS language selection, automatic detection, Bark English boundary and invalid preference recovery")
         let saved = defaults.object(forKey: "selectedModel")
         defer { if let saved { defaults.set(saved, forKey: "selectedModel") } else { defaults.removeObject(forKey: "selectedModel") } }
         for id in ["bark", "bark-plus", "bark-pro"] {

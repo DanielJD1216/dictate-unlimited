@@ -3,7 +3,7 @@ import XCTest
 final class CatalogTests: XCTestCase {
     func testExactlyApprovedCatalogAndImmutableArtifacts() throws {
         let models = try ModelCatalog.load()
-        XCTAssertEqual(Set(models.map(\.id)), ["bark", "bark-plus", "bark-pro"])
+        XCTAssertEqual(Set(models.map(\.id)), ["bark", "bark-plus", "bark-pro", "whisper-small", "whisper-turbo"])
         for m in models {
             XCTAssertFalse(m.revision.isEmpty); XCTAssertNotEqual(m.revision, "main")
             XCTAssertGreaterThan(m.bytes, 100_000_000)

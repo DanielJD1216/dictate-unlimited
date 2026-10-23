@@ -4,11 +4,11 @@
 
 **Free, local voice dictation for your Mac. Built by DOO MADE.**
 
-Speak into the app you're already using. Choose one of three Bark models, hold or tap
+Speak into the app you're already using. Choose a Bark or Whisper model, hold or tap
 a shortcut, and turn speech into text on your Mac. No account, subscription, cloud
 inference, or telemetry.
 
-**Source preview · Apple Silicon · macOS 15+ · English**
+**V1.1 development branch · Apple Silicon · macOS 15+ · Local testing, not published**
 
 This release is for people comfortable building from source. A signed, notarized
 app download is not available yet. There is no usage quota; each recording has a
@@ -18,7 +18,7 @@ five-minute limit. Recognition quality and insertion support vary by model and a
 
 ## What it does
 
-- **Three on-device models.** Bark 3.0, Bark 3.0 Plus, and Bark 3.0 Pro. Download explicitly, then transcribe offline. Your selected installed model loads on launch.
+- **Five on-device models.** Bark 3.0, Bark 3.0 Plus, Bark 3.0 Pro, Whisper small, and Whisper Turbo. Download explicitly, then transcribe offline. Your selected installed model loads on launch.
 - **Hold or tap to dictate.** Configurable dictation and recovery shortcuts, with notch or floating feedback.
 - **Microphone readiness.** Choose an input and run a five-second signal check before recording.
 - **Text delivery.** Clipboard paste into supported focused fields, with Accessibility checks and delivery feedback. Never sends Enter.
@@ -77,12 +77,19 @@ for cancellation, dictionary rules, clipboard behavior, and microphone selection
 | Bark 3.0 | 202 MB | Core ML quantized encoder |
 | Bark 3.0 Plus | 206 MB | Core ML mixed-precision encoder |
 | Bark 3.0 Pro | 1.23 GB | Core ML FP16 export |
+| Whisper small | 489 MB | Multilingual Core ML |
+| Whisper Turbo | 630 MB | Compressed large-v3-turbo Core ML |
 
 These are Core ML exports, so download sizes differ from the original MLX/BF16
-models. All three are English models. Runtime or benchmark equivalence to the
+models. Bark models are English-only. Whisper supports multilingual transcription. Runtime or benchmark equivalence to the
 original model paths is not claimed. Weights are downloaded separately under
-CC BY 4.0, never included in this repository. Exact revisions, sizes and hashes
-are pinned in [the model catalog](Sources/DictateCore/Resources/models.json).
+CC BY 4.0 (Bark) or MIT (Whisper), never included in this repository. Exact revisions, sizes and hashes
+are pinned in [the Bark catalog](Sources/DictateCore/Resources/models.json) and
+[Whisper catalog](Sources/DictateCore/Resources/whisper-models.json).
+
+Whisper adds Auto-detect or a chosen language, including Korean and English.
+Transcription preserves the spoken language; translation is disabled. Compatible
+local model imports are described in [Whisper and local imports](docs/WHISPER.md).
 
 ## Privacy and boundaries
 

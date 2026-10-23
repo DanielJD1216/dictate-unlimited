@@ -10,6 +10,11 @@ import DictateCore
     @Published var level: Float = 0
     @Published var seconds: Double = 0
     @Published var loadedID: String?
+    @Published var language = UserDefaults.standard.string(forKey:"transcriptionLanguage") ?? "auto" {
+        didSet { UserDefaults.standard.set(language,forKey:"transcriptionLanguage") }
+    }
+    var supportsLanguageSelection: Bool { loadedID?.hasPrefix("whisper-") == true }
+    var recognitionLanguage: String? { supportsLanguageSelection ? (language == "auto" ? nil : language) : "en" }
     @Published private(set) var lastDictation = ""
     var canRecover: Bool { !lastDictation.isEmpty && !busy }
     var meter: Double { min(1,max(0,(20 * log10(max(Double(level),0.000001)) + 60) / 60)) }
@@ -31,6 +36,7 @@ import DictateCore
     var busy: Bool { phase != .idle }
     init(resolveInput: @escaping () throws -> UInt32? = { nil }, correct: @escaping (String) -> String = { $0 }, microphoneAccess: @escaping () async -> Bool = { await AVCaptureDevice.requestAccess(for:.audio) }) {
         self.resolveInput=resolveInput;self.correct=correct;self.microphoneAccess=microphoneAccess
+        if !TranscriptionLanguage.valid(language) { language="auto" }
         capture.onInterruption = { [weak self] in
             guard let self, self.phase == .recording || self.phase == .testingMicrophone else { return }
             self.interrupt("Microphone input changed. Recording discarded; start again when your input is ready.")
@@ -136,7 +142,7 @@ import DictateCore
             work = Task {
                 defer { target = nil }
                 do {
-                    let result = try await recognition.transcribe(audio)
+                    let result = try await recognition.transcribe(audio, language: recognitionLanguage)
                     try Task.checkCancellation()
                     transcript = correct(result.trimmingCharacters(in: .whitespacesAndNewlines))
                     if transcript.isEmpty { message = "No speech detected. Try again." }

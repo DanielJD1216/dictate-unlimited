@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import DictateCore
 
 enum Design {
@@ -62,6 +63,15 @@ struct SettingsView: View {
                 if session.phase == .recording || session.phase == .testingMicrophone { ProgressView(value: session.meter).padding(16); Text(String(format: "%.1f seconds", session.seconds)).font(.caption.monospacedDigit()).padding([.horizontal,.bottom],16) }
             }
             Text(session.message).font(.system(size: 12)).foregroundStyle(.secondary).textSelection(.enabled)
+            card {
+                HStack {
+                    row("Language", detail: session.supportsLanguageSelection ? "Transcribes speech in its original language. Auto-detect chooses the language; mixed-language results vary." : "Bark models transcribe English. Load a Whisper model for other languages.")
+                    Spacer()
+                    Picker("Transcription language", selection: $session.language) {
+                        ForEach(TranscriptionLanguage.options,id: \.code) { option in Text(option.name).tag(option.code) }
+                    }.labelsHidden().frame(width:190).padding(16).disabled(!session.supportsLanguageSelection || session.busy)
+                }
+            }
             MicrophoneSettingsView(session:session,microphones:microphones).disabled(shortcuts.recording != nil)
             ShortcutSettingsView(shortcuts:shortcuts,busy:session.busy)
             HStack {
@@ -81,22 +91,22 @@ struct SettingsView: View {
     }
     private var models: some View {
         Group {
-            Text("Choose your Bark model").font(.system(size: 15, weight: .semibold))
-            Text("English dictation. Downloads are optional and explicit. Once installed, recognition works without a network connection.").font(.system(size: 12)).foregroundStyle(.secondary)
+            Text("Choose your dictation model").font(.system(size: 15, weight: .semibold))
+            Text("Bark for English; Whisper for multilingual dictation. Download explicitly or import a compatible local model. Recognition stays on this Mac.").font(.system(size: 12)).foregroundStyle(.secondary)
             card {
                 ForEach(store.models) { model in
                     VStack(alignment: .leading, spacing: 10) {
                         HStack {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(model.name).font(.system(size: 14, weight: .medium))
-                                Text("\(ByteCountFormatter.string(fromByteCount: model.bytes, countStyle: .file)) download · \(model.precision)").font(.system(size: 12)).foregroundStyle(.secondary)
+                                Text("\(ByteCountFormatter.string(fromByteCount: model.bytes, countStyle: .file)) \(model.isImported ? "local files" : "download") · \(model.precision)").font(.system(size: 12)).foregroundStyle(.secondary)
                             }
                             Spacer()
                             if session.loadedID == model.id { Label("Active", systemImage: "checkmark.circle.fill").foregroundStyle(.green).font(.system(size: 12)) }
                             else if store.installed.contains(model.id) { Button("Load") { session.load(model, store: store) }.disabled(session.busy) }
                             else { Button("Download") { store.download(model) }.disabled(store.downloading != nil || session.busy) }
                         }
-                        if store.installed.contains(model.id) && session.loadedID != model.id {
+                        if !model.isImported && store.installed.contains(model.id) && session.loadedID != model.id {
                             Button("Repair download") { store.download(model, repair: true) }.font(.system(size: 11)).disabled(store.downloading != nil || session.busy)
                         }
                         if store.downloading == model.id { HStack { ProgressView(value: store.progress); Button("Cancel") { store.cancel() } } }
@@ -107,9 +117,19 @@ struct SettingsView: View {
             if session.busy {
                 HStack { ProgressView().controlSize(.small); Text(session.message).font(.system(size: 12)); Spacer(); Button("Cancel") { session.cancel() }.disabled(session.phase == .cancelling || session.phase == .delivering) }
             } else { Text(session.message).font(.system(size: 12)).foregroundStyle(.secondary) }
+            HStack {
+                Button("Import local Whisper model…") { chooseLocalModel() }.disabled(store.downloading != nil || session.busy)
+                if store.downloading?.hasPrefix("whisper-import-") == true { ProgressView().controlSize(.small);Button("Cancel import") { store.cancel() } }
+            }
+            Text("Import a complete WhisperKit multilingual small or large-v3/Turbo Core ML export, including its tokenizer. Files are copied into app storage and checked before installation. Raw PyTorch/MLX weights and executable plugins are not supported.").font(.system(size:11)).foregroundStyle(.secondary)
             Text(store.message).font(.system(size: 12)).foregroundStyle(.secondary).textSelection(.enabled)
-            Text("Models are CC BY 4.0. Core ML export sizes differ from the original MLX/BF16 download sizes. Initial preparation can take several minutes. The first longer recording may need one additional local compilation.").font(.system(size: 11)).foregroundStyle(.secondary)
+            Text("Bark models are CC BY 4.0; Whisper is MIT. Imported models keep their own licences. Core ML export sizes differ from original weights. Initial preparation can take several minutes. The first longer recording may need one additional local compilation.").font(.system(size: 11)).foregroundStyle(.secondary)
         }
+    }
+    private func chooseLocalModel() {
+        let panel=NSOpenPanel();panel.canChooseDirectories=true;panel.canChooseFiles=false;panel.allowsMultipleSelection=false
+        panel.prompt="Import model";panel.message="Choose a complete WhisperKit Core ML model folder with local tokenizer files."
+        if panel.runModal() == .OK,let url=panel.url { store.importLocal(url) }
     }
     private var appearance: some View {
         Group {
@@ -128,7 +148,7 @@ struct SettingsView: View {
             Divider()
             row("Local by design", detail: "No accounts, analytics, cloud inference, meetings, memos or agent integrations. Network requests are made only when you choose a model download. No recording or transcript history is written by the app. Only your explicit dictionary corrections and settings are saved locally.")
             Divider()
-            row("Model attribution", detail: "Conway Research / Underdog, based on NVIDIA Parakeet and Moondream. See THIRD_PARTY_NOTICES.md in the source distribution.")
+            row("Model attribution", detail: "Bark: Conway Research / Underdog, based on NVIDIA Parakeet and Moondream. Whisper: OpenAI; Core ML exports and WhisperKit: Argmax. See THIRD_PARTY_NOTICES.md in the source distribution.")
         }
     }
 }

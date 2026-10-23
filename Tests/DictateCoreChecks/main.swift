@@ -1,7 +1,7 @@
 import Foundation
 import DictateCore
 let models = try ModelCatalog.load()
-precondition(Set(models.map(\.id)) == ["bark", "bark-plus", "bark-pro"])
+precondition(Set(models.map(\.id)) == ["bark", "bark-plus", "bark-pro", "whisper-small", "whisper-turbo"])
 for m in models {
     precondition(!m.revision.isEmpty && m.revision != "main")
     precondition(m.bytes > 100_000_000)

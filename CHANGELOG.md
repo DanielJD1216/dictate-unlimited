@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased: V1.1
+
+- Whisper small and compressed large-v3-turbo with fully local tokenizers.
+- Automatic or explicit transcription language, including English and Korean.
+- Validated, copied local WhisperKit model imports with persistence.
+- Existing Bark models and local-only inference retained.
+- Local testing only; do not treat this branch as a published release.
+
 ## 0.1.0-preview.1
 
 Initial source-only preview from DOO MADE.

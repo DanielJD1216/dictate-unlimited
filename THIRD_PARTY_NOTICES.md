@@ -31,3 +31,18 @@ No third-party model weights are included in the source preview or app bundle.
 
 The BarkSmall adaptation notice is also copied into the app's Notices directory.
 See docs/LICENSING.md for file scope and the offline audit boundary.
+
+## Whisper additions (V1.1 development)
+
+- OpenAI Whisper small and large-v3-turbo weights/tokenizers: MIT. Exact upstream
+  revisions and SHA-256 hashes are in Sources/DictateCore/Resources/whisper-models.json.
+  Core ML exports are from Argmax's whisperkit-coreml repository, revision
+  0f63a7800b00dd0226abd051b906c246e1907482. Turbo is explicitly the compressed
+  626MB export; runtime equivalence to uncompressed benchmarks is not claimed.
+- WhisperKit / ArgmaxCore: MIT, pinned commit
+  1bbc57cb7fe6410248a685b1c5a3c6d56adc2ed4. Retain Resources/Notices/WhisperKit-LICENSE.txt
+  and WhisperKit-NOTICES.txt, which includes Apache-2.0 swift-transformers-derived code.
+  WhisperRecognition.swift adapts its tokenizer wrapper to remove remote fallback.
+- swift-argument-parser is a resolved dependency used by upstream command-line
+  targets, not linked by this app's WhisperKit library target.
+- Imported models retain their own licences; the app does not relicense user imports.

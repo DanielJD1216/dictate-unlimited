@@ -1,6 +1,7 @@
 # Contributing
 
-V1 is English on-device dictation with three pinned Bark models. Keep changes
+V1.1 development adds multilingual Whisper small/Turbo and compatible local imports
+to the three pinned Bark models. Keep changes
 focused on recognition, safe text insertion, model management and native feedback.
 Accounts, cloud inference, analytics, meetings, voice memos and agent integrations
 are outside scope.
