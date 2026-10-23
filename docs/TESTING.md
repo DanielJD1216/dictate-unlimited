@@ -6,6 +6,7 @@ Tools-only test host. Use full Xcode for `swift test`.
 
 ```sh
 ./scripts/check-local.sh
+./scripts/check-audio-startup.sh
 ./scripts/check-session.sh
 ./scripts/check-model-store.sh
 ./scripts/check-correction-store.sh
@@ -18,11 +19,11 @@ interruption and suppression of late results. They do not simulate physical hard
 
 ## Observed coverage
 
-- All three models downloaded through the app into isolated storage and passed
+- All three Bark models downloaded through the app into isolated storage and passed
   declared size/hash checks. The clean-built app then transcribed the synthetic
   fixture from those new downloads with networking denied. Base Repair restored a
   deliberately corrupted artifact. Cancel/retry also passed in the real UI.
-- All three accepted five-minute input and rejected input over the limit.
+- All three Bark models accepted five-minute input and rejected input over the limit.
 - Base and Plus exactly matched a 738-word repeated fixture. Pro inserted three
   extra words. This fixture is not a general recognition-accuracy benchmark.
 - A real five-minute microphone recording stopped automatically; cancellation during
@@ -63,7 +64,7 @@ and re-adding the current app; the tester confirmed delivery afterward. Closing 
 reopening Settings was tested after adding the application reopen handler. These
 checks do not imply every keyboard layout, application or microphone was tested.
 
-## V1.1 local development checks
+## V1.1 validation
 
 Whisper small and compressed Turbo were exercised with networking denied using
 installed macOS Samantha/Yuna synthetic voices, separately in English/Korean and
@@ -78,7 +79,10 @@ English inference; base heard “Mac” as “map”, and Pro emitted its known 
 Import store checks cover copied-file hashes, persistence, corruption, symlinks,
 unexpected executable files, missing components, cancellation and URL directory
 metadata differences. Runtime checks confirm corrupt tokenizers fail locally with
-no fallback. Physical bilingual dictation/insertion on this build remains pending.
+no fallback. The tester confirmed Korean and Japanese dictation worked and reported completion
+of the requested English/Korean/mixed-language check. After the microphone freeze
+repair, the tester confirmed the app worked. These are user confirmations, separate
+from the synthetic fixtures and bounded repeated-start checks below.
 
 Microphone-startup follow-up: a user-reported freeze was sampled inside
 AVAudioEngine input-device setup on the main actor, not Whisper inference. Engine

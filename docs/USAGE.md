@@ -2,7 +2,7 @@
 
 ## Use
 
-1. On first use, open Models, download one of Bark 3.0 / Plus / Pro, then Load it. Later launches automatically validate and load your last selected installed model. First load can
+1. On first use, open Models, download a Bark model for English or Whisper small/Turbo for multilingual dictation, then Load it. Later launches automatically validate and load your last selected installed model. First load can
    take minutes while Core ML compiles. Base/Plus prepare the short encoder first and prepare the long encoder
    only when needed. Warm caches are reused; see docs/TESTING.md for coverage and the remaining first-use delay. Switching releases the previous runtime.
 2. In Dictation, check **Microphone readiness**, choose System default or a specific
@@ -50,7 +50,7 @@ beside the verified model artifacts in Application Support/DOO MADE/Dictate Unli
 The original 163/180 MB MLX and 1.25 GB BF16 artifacts are not the Core ML exports.
 Actual displayed downloads are approximately 202 MB, 206 MB and 1.23 GB. Pro uses
 FP16 Core ML weights. Runtime/accuracy equivalence to original benchmark paths is
-not claimed. All three are English models; they transcribe fillers rather than
+not claimed. Bark models are English-only; they transcribe fillers rather than
 performing cloud cleanup.
 
 
@@ -61,3 +61,11 @@ If System Settings shows access enabled but the app says **Text insertion access
 Your completed text remains in the app until Clear or Quit. Once access is restored, focus your writing field and use paste-last recovery. Always inspect an uncertain delivery before retrying to avoid duplicate text.
 
 The app lives in the menu bar. Closing Settings does not quit it. Open the app again or choose Settings from the microphone menu. The floating feedback view hides when dictation finishes.
+
+## Languages and imported models
+
+Load Whisper small or Turbo to enable the Language selector. Choose Auto-detect or
+a listed language, including Korean and Japanese. Transcription keeps the spoken
+language; translation is disabled. Mixed-language results vary, especially with small.
+Use Models → Import local Whisper model for a compatible offline folder. See
+[Whisper and local imports](WHISPER.md) for the exact folder requirements and limits.

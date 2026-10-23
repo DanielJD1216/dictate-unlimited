@@ -8,7 +8,7 @@ Speak into the app you're already using. Choose a Bark or Whisper model, hold or
 a shortcut, and turn speech into text on your Mac. No account, subscription, cloud
 inference, or telemetry.
 
-**V1.1 development branch · Apple Silicon · macOS 15+ · Local testing, not published**
+**V1.1 source preview · Apple Silicon · macOS 15+ · English and multilingual dictation**
 
 This release is for people comfortable building from source. A signed, notarized
 app download is not available yet. There is no usage quota; each recording has a
@@ -30,7 +30,7 @@ five-minute limit. Recognition quality and insertion support vary by model and a
 
 Real screenshots from the local preview build. The banner above is illustrative artwork.
 
-![Model selection showing Bark 3.0, Plus and Pro](docs/images/models.jpg)
+![Model selection showing three Bark models, Whisper small and Turbo, and a local import](docs/images/models.jpg)
 
 <details>
 <summary>Recording feedback settings</summary>
@@ -110,6 +110,7 @@ are outside V1. See [known limits and tested coverage](docs/TESTING.md).
 
 ```sh
 ./scripts/check-local.sh
+./scripts/check-audio-startup.sh
 ./scripts/check-session.sh
 ./scripts/check-model-store.sh
 ./scripts/check-correction-store.sh

@@ -1,16 +1,19 @@
 # Source preview release
 
-The first public release is a source-only preview. Build it locally using the README.
+V1.1 is a source-only preview. Build it locally using the README.
 No signed/notarized app binary or model weights are distributed. App metadata is
-0.1.0 (build 1); the source preview tag is `v0.1.0-preview.1`.
+0.2.0 (build 2); the source preview tag is `v0.2.0-preview.1`.
 
 ## Scope and checks
 
-Includes three pinned Bark models, microphone readiness and selection, configurable
+Includes three pinned Bark models plus Whisper small and Turbo, language selection,
+compatible local imports, microphone readiness and selection, configurable
 tap/hold shortcuts, safe text delivery, paste-last recovery, a local dictionary,
 and notch/floating feedback. Local tests and physical user checks are summarized in
-[TESTING.md](TESTING.md). All three models passed packaged local inference checks;
-Download/Repair and clean dependency acquisition were tested on the existing Mac.
+[TESTING.md](TESTING.md). All five catalog models passed packaged local inference checks;
+Bark Download/Repair and clean dependency acquisition were tested on the existing Mac.
+Whisper artifacts were acquired and hash-verified; offline inference and GUI import
+were tested. The complete real Whisper Download/Repair GUI flow has not been rerun.
 A fresh second Mac, broad hardware coverage, and hosted CI remain unverified.
 
 ## Source packaging

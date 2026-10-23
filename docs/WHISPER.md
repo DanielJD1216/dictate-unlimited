@@ -1,6 +1,7 @@
 # Whisper and local model imports
 
-V1.1 is under local testing. The public source preview has not been updated.
+V1.1 is available as source preview `v0.2.0-preview.1`. Build from source;
+no signed/notarized app binary is included.
 
 ## Recommended models
 

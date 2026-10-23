@@ -1,12 +1,14 @@
 # Changelog
 
-## Unreleased: V1.1
+## 0.2.0-preview.1 · V1.1
 
 - Whisper small and compressed large-v3-turbo with fully local tokenizers.
 - Automatic or explicit transcription language, including English and Korean.
 - Validated, copied local WhisperKit model imports with persistence.
 - Existing Bark models and local-only inference retained.
-- Local testing only; do not treat this branch as a published release.
+- Microphone startup moved off the UI thread with bounded timeout and cancellation.
+- Fixed false input-change interruptions; nine repeated capture cycles tested.
+- Source-only preview. No signed/notarized app binary is distributed.
 
 ## 0.1.0-preview.1
 

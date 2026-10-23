@@ -25,7 +25,7 @@ input. Accessibility is separately granted by the user; insertion uses no Apple 
 The helper refuses an existing output and creates a separate ad-hoc Hardened Runtime
 copy. It does not contact a timestamp service, use Developer ID credentials, or
 submit anything. This output is **not notarized**. A prior local hardened copy passed
-signature/resource checks and offline inference for all three models; that does not
+signature/resource checks and offline inference for all three Bark models; that does not
 prove final signed GUI behavior or Apple acceptance.
 
 Before a binary release, verify the exact signed artifact, successful notarization,
